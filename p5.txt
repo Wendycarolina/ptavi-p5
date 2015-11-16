@@ -13,36 +13,49 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 2. Observa que las tramas capturadas corresponden a una sesión SIP con Ekiga, un cliente de VoIP para GNOME. Responde a las siguientes cuestiones:
  ** ¿Cuántos paquetes componen la captura?
+    954
  ** ¿Cuánto tiempo dura la captura?
+    56.149655 segundos
  ** ¿Qué IP tiene la máquina donde se ha efectuado la captura? ¿Se trata de una IP pública o de una IP privada? ¿Por qué lo sabes?
-
+    IP : 192.168.1.34. Debido a que observamos el tráfico de paquetes bidireccional desde la IP 192.168.1.34 a las Ip's 80.58.61.250 y 86.64.162.35. Podría haberse hecho en cualquier otra máquina
+    que estuviese conectada a la IP privada y que tuviera visibilidad de todo el tráfico de paquetes que le llegan y envían.
+    Privada, por el rango de reseva, 192.168
+    
 
 3. Antes de analizar las tramas, mira las estadísticas generales que aparecen en el menú de Statistics. En el apartado de jerarquía de protocolos (Protocol Hierarchy) se puede ver el porcentaje del tráfico correspondiente al protocolo TCP y UDP.
  ** ¿Cuál de los dos es mayor? ¿Es esto consistente con una aplicación que transmite en tiempo real?
+    UDP con un 96,23% frente a un 2.10% de TCP, ya que contiene todo lo que nos va a interesar, STUN?, SIP, RTP, RTCP(protocolo de control de RTP)
  ** ¿Qué otros protocolos podemos ver en la jerarquía de protocolos?
-
+    SIP, RTP, RTCP
 
 4. Observa por encima el flujo de tramas en el menú de Statistics en IO Graphs. La captura que estamos viendo incluye desde la inicialización (registro) de la aplicación hasta su finalización, con una llamada entremedias.
  ** Filtra por sip para conocer cuándo se envían paquetes SIP. ¿En qué segundos tienen lugar esos envíos?
+    Casi al principio y al final, que tendrán que ver con el inicio y la finalización de la conexión.
  ** Y los paquetes con RTP, ¿cuándo se envían?
-
+    En los segundos centrales del segundo 15 al 40 aproximadamente.
+    
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
 5. Analiza las primeras cuatro tramas de la captura nada más arrancar Ekiga.
  ** ¿Qué servicio es el utilizado en estas tramas?
+    varias interacciones cliente-servidor en DNS
  ** ¿Cuál es la dirección IP del servidor de nombres del ordenador que ha lanzado Ekiga?
+    86...
  ** ¿Qué dirección IP (de ekiga.net) devuelve el servicio de nombres?
  ** ¿Por qué se pide también para 35.162.64.86.in-addr.arpa?
 
-
+Type PTR dominio inverso
 6. A continuación, hay más de una docena de tramas TCP/HTTP.
  ** ¿Podrías decir la URL que se está pidiendo?
+    http://ekiga.net/ip
  ** ¿Qué user agent (UA) la está pidiendo?
+    Ekiga
  ** ¿Qué devuelve el servidor?
+    
  ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor?
-
+    
 
 7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
  ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
@@ -51,9 +64,13 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
  ** ¿Qué dirección IP tiene el servidor Registrar?
+    86.64.162.35
  ** ¿A qué puerto (del servidor Registrar) se envían los paquetes SIP?
+    5060
  ** ¿Qué método SIP utiliza el UA para registrarse?
+    REGISTER
  ** Además de REGISTER, ¿qué instrucciones SIP entiende el UA?
+    INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
 
 
 
@@ -61,23 +78,36 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 9. Fijémonos en las tramas siguientes a la número 46:
  ** ¿Se registra con éxito en el primer intento?
+    No
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
+    por el 200 OK
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
 
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
+    Si, en el paquete 84 dentro de Session Initiation Protocol en el campo from de Message Header. En este caso "Gregorio Robles".
  ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
+    El cuerpo de la trama contiene : Owner/creator, Connection Information, Time Description, Media Description, Media Attribute, Connection Information.
+    El protocolo/formato que usa es SDP.
  ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
+    No, contesta con el status 407 Proxy Authentication Required, deberia recibir un ACK 200 confirmando que se ha efectuado correctamente.
  ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
-
+    Se diferencia a que en el segundo INVITE se añade el campo Proxy Authentication, que es lo que se necesita para que e servidor 
+    cumpla los requisitos y el método realice correctamente.
 
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
+    RTP, ICMP y RTCP.
  ** ¿Cuál es el tamaño de paquete de los mismos?
+    RTP : 214
+    RTCP: 102
+    ICMP: 70
  ** ¿Se utilizan bits de padding?
+    No, ya que tiene valor False en el campo padding.
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
+    Los paquetes RTP envían 160 bytes/paquete.
  ** ¿Cuántos bits/segundo estamos enviando?
 
 
@@ -86,36 +116,56 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
  ** ¿Cuántos flujos hay? ¿por qué?
+    Hay 2 flujos, se muestran si vamos a la opción RTP de la pestaña Telephony. Si nos fijamos en un primer momento en lo que contiene la trama
+    105 contiene toda la información. En ella incluye un audio de puerto destino 12440 y un vídeo 19062.
  ** ¿Cuántos paquetes se pierden?
+    Ninguno.
  ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
+    Audio : valor máximo 1290.44
+    Vídeo : valor máximo 1290.48
  ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
-
+    Audio:
+    jitter medio:42.50      jitter máximo:119.64
+    Vídeo:
+    jitter medio:153.24     jitter máximo: 183.10
+    Quiere decir que se produce un retardo en la transmisión de los paquetes. En el audio llegan correctamente pero en cuanto al vídeo se pierden
+    el 80 % de paquetes RTP, debido a este jitter.
 
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
+    Delt 0ms y jitter 0ms.
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
+    Si, debido a que el campo delta y jitter tienen valor cero.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
+    En el paquete 247, con un jitter de 38.82ms.
  ** ¿A qué se debe el cambio tan brusco del jitter?
+    A un retardo considerable en el envio/recepción del paquete.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
 
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
+    24,802 segundos.
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
 
 
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
+    El método BYE.
  ** ¿En qué trama(s)?
+    En las tramas 924,925,927 y 933.
  ** ¿Por qué crees que se envía varias veces?
-
+    Para asegurarse de que la transmisión se realice correctamente y de esta manera al recibir uno ACK de alguno de los
+    BYE enviados, dar por terminada la llamada.
 
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
+    Porque la envía con el campo Expire = 0, que hace que borre su sesión.
  ** ¿En qué trama sucede esto?
+    En la trama 950.
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
-
+    Se diferencia en que al principio de la sesión el campo expire era 3600, dirente de cero.
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
