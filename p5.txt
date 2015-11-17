@@ -80,10 +80,11 @@ Type PTR dominio inverso
  ** ¿Se registra con éxito en el primer intento?
     No
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
-    por el 200 OK
+    Si recibimos un 200 ACK.
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
+    Podemos ver que en el segundo intento hay 712 mientras que en primero había 523, esto se debe a que en el segundo intento se inserta en campo Authorization.
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
-
+    3600
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
@@ -179,12 +180,15 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
 
 17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
  ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
-    No.
+    No, ya que estamos trabajando con ip'publicas directamente.
  ** ¿Son diferentes el registro y la descripción de la sesión?
+    Se diferencian en el campo Allow, ya que contiene más métodos que la anterior captura:
+    INVITE, ACK, BYE, CANCEL, SUBSCRIBE, NOTIFY, REFER, MESSAGE, INFO, PING, PRACK.
 
 
 18. Identifica las diferencias existentes entre esta conversación y la conversación anterior:
  ** ¿Cuántos flujos tenemos?
+    
  ** ¿Cuál es su periodicidad?
  ** ¿Cuánto es el valor máximo del delta y los valores medios y máximo del jitter?
  ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
