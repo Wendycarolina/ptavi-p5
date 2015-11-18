@@ -208,6 +208,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
         Audio2: Delta máx = 27.10ms | jitter máx = 1.24ms | jitter medio = 0.26ms
     
  ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
+    Si, si vamos a Telephony-VoIP Call-Play-Decode.
  ** ¿Sabrías decir qué tipo de servicio ofrece sip:9999@qxip.net?
 
 
