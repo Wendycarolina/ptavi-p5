@@ -49,18 +49,22 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 Type PTR dominio inverso
 6. A continuación, hay más de una docena de tramas TCP/HTTP.
  ** ¿Podrías decir la URL que se está pidiendo?
-    http://ekiga.net/ip
+    http://ekiga.net/ip/
  ** ¿Qué user agent (UA) la está pidiendo?
     Ekiga
  ** ¿Qué devuelve el servidor?
-    
+    83.36.48.212
  ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor?
-    
+    El servidor nos responde con nuestra IP pública que es la dirección con la que me pongo en contacto con el.
 
 7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
  ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
+    STUN es un protocolo de red del tipo cliente/servidor que permite a clientes NAT encontrar su dirección IP pública,
+    el tipo NAT en el que se encuentra y el puerto de Internet asociado con el puerto local a traves de NAT. Esta información
+    es usada para configurar una comunicación UDP entre dos host que se encuentren tras enrutadores NAT.
+    Usamos este protocolo ya que estamos trabajando con IP privada y Ekiga necesita nuestra IP pública para realizar l comunicación.
  ** ¿Estamos tras un NAT?
-
+    Si, ya que como explicamos en el apartado anterior necesitamos la IP pública.
 
 8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
  ** ¿Qué dirección IP tiene el servidor Registrar?
@@ -108,8 +112,9 @@ Type PTR dominio inverso
  ** ¿Se utilizan bits de padding?
     No, ya que tiene valor False en el campo padding.
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
-    Los paquetes RTP envían 160 bytes/paquete.
+    Los paquetes RTP envían 160 bytes (1280bits) de los cuales hay 50 . Por lo tanto la periodicidad es 1/50= 20 ms 
  ** ¿Cuántos bits/segundo estamos enviando?
+    Dado que enviamos 50 paquetes/segundo con el tamaño de cada paquete 1280 bits/paquete => 50*1280 = 64bits/segundo
 
 
 
@@ -129,8 +134,8 @@ Type PTR dominio inverso
     jitter medio:42.50      jitter máximo:119.64
     Vídeo:
     jitter medio:153.24     jitter máximo: 183.10
-    Quiere decir que se produce un retardo en la transmisión de los paquetes. En el audio llegan correctamente pero en cuanto al vídeo se pierden
-    el 80 % de paquetes RTP, debido a este jitter.
+    Quiere decir que se produce un retardo en la transmisión de los paquetes. Tanto el audio como el vídeo son pierden
+    paquetes RTP, debido a este jitter por lo que es una conversación de mala calidad.
 
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
@@ -142,6 +147,7 @@ Type PTR dominio inverso
  ** ¿A qué se debe el cambio tan brusco del jitter?
     A un retardo considerable en el envio/recepción del paquete.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
+    No ya que los valores delta del paquete actual con el anterior tienen una gran diferencia.
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
 
 
@@ -149,6 +155,11 @@ Type PTR dominio inverso
  ** ¿Cuánto dura la conversación?
     24,802 segundos.
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
+    SSRC:
+        Vídeo : 0x43306582
+        Audio : 0xBF4AFD37
+    No hay CSRCs debido a que no hay mezcladores, que son la forma en la que los obtenemos.
+
 
 
 15. Identifica la trama donde se finaliza la conversación.
