@@ -210,7 +210,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
  ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
     Si, si vamos a Telephony-VoIP Call-Play-Decode.
  ** ¿Sabrías decir qué tipo de servicio ofrece sip:9999@qxip.net?
-
+    El tipo de servicio que ofrece es de música (audio).
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
