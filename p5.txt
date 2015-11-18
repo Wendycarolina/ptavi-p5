@@ -149,7 +149,8 @@ Type PTR dominio inverso
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
     No ya que los valores delta del paquete actual con el anterior tienen una gran diferencia.
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
-
+    A medida que aumenta la delta tambien lo hace el jitter, ademas el jitter actual se toma el valor del jitter
+    anterior para su cálculo.
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
